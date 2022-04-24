@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'bbb-icons';
+  src: url('/fonts/BbbIcons/bbb-icons.woff?j1ntjp') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 [class^="icon-bbb-"], [class*=" icon-bbb-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'bbb-icons' !important;
@@ -52,10 +59,13 @@
   content: "\e929";
 }
 .icon-bbb-eraser_tool:before {
-  content: "\e95b";
+  content: "\e966";
 }
 .icon-bbb-line_tool:before {
   content: "\e91c";
+}
+.icon-bbb-marker_tool:before {
+  content: "\e967";
 }
 .icon-bbb-circle_tool:before {
   content: "\e91d";
@@ -197,7 +207,6 @@
   content: "\e963";
 }
 
-
 /* Aliases for emoji status */
 .icon-bbb-time:before {
   content: "\e908";
@@ -232,7 +241,6 @@
 .icon-bbb-about:before {
   content: "\e933";
 }
-
 .icon-bbb-delete:before {
   content: "\e936";
 }
@@ -256,6 +264,9 @@
 }
 .icon-bbb-multi_whiteboard:before {
   content: "\e93d";
+}
+.icon-bbb-multi_whiteboard_isolated:before {
+  content: "\e968";
 }
 .icon-bbb-whiteboard:before {
   content: "\e93e";

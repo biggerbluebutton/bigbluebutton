@@ -5,6 +5,7 @@ object WhiteboardKeyUtil {
   val PENCIL_TYPE = "pencil";
   val RECTANGLE_TYPE = "rectangle";
   val ERASER_TYPE = "eraser";
+  val MARKER_TYPE = "marker";
   val ELLIPSE_TYPE = "ellipse";
   val TRIANGLE_TYPE = "triangle";
   val LINE_TYPE = "line";
