@@ -205,7 +205,7 @@ public:
   externalVideoPlayer:
     enabled: true
   kurento:
-    wsUrl: HOST
+    wsUrl: wss://vh-sg-002.bbb-engine.com/bbb-webrtc-sfu
     # Valid for video-provider. Time (ms) before its WS connection times out
     # and tries to reconnect.
     wsConnectionTimeout: 4000
@@ -701,6 +701,10 @@ public:
         - value: 20
         - value: 16
       tools:
+        - icon: eraser_tool
+          value: eraser
+        - icon: marker_tool
+          value: marker
         - icon: text_tool
           value: text
         - icon: line_tool
@@ -716,6 +720,8 @@ public:
         - icon: hand
           value: hand
       presenterTools:
+        - marker
+        - eraser
         - text
         - line
         - ellipse
@@ -724,6 +730,8 @@ public:
         - pencil
         - hand
       multiUserTools:
+        - marker
+        - eraser
         - text
         - line
         - ellipse
