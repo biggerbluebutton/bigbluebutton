@@ -48,7 +48,6 @@ export default class PencilPointerListener extends Component {
   commonDrawStartHandler(clientX, clientY) {
     const {
       actions,
-      drawSettings,
     } = this.props;
 
     const {
@@ -68,7 +67,7 @@ export default class PencilPointerListener extends Component {
 
     // sending the first message
     this.points = [transformedSvgPoint.x, transformedSvgPoint.y];
-    this.handleDrawPencil(this.points, DRAW_START, generateNewShapeId(), undefined, drawSettings.tool);
+    this.handleDrawPencil(this.points, DRAW_START, generateNewShapeId());
   }
 
   commonDrawMoveHandler(clientX, clientY) {
@@ -106,14 +105,14 @@ export default class PencilPointerListener extends Component {
     if (this.isDrawing && this.points.length > 0) {
       const {
         actions,
-        drawSettings,
       } = this.props;
 
       const { getCurrentShapeId } = actions;
-      this.handleDrawPencil(this.points, DRAW_UPDATE, getCurrentShapeId(), undefined, drawSettings.tool);
+      this.handleDrawPencil(this.points, DRAW_UPDATE, getCurrentShapeId());
     }
   }
-  handleDrawPencil(points, status, id, dimensions, pencilType) {
+
+  handleDrawPencil(points, status, id, dimensions) {
     const {
       whiteboardId,
       userId,
@@ -134,7 +133,7 @@ export default class PencilPointerListener extends Component {
     const annotation = {
       id,
       status,
-      annotationType: pencilType,
+      annotationType: 'pencil',
       annotationInfo: {
         color,
         thickness: normalizeThickness(thickness),
@@ -142,7 +141,7 @@ export default class PencilPointerListener extends Component {
         id,
         whiteboardId,
         status,
-        type: pencilType,
+        type: 'pencil',
       },
       wbId: whiteboardId,
       userId,
@@ -163,7 +162,6 @@ export default class PencilPointerListener extends Component {
         physicalSlideWidth,
         physicalSlideHeight,
         actions,
-        drawSettings,
       } = this.props;
 
       const { getCurrentShapeId } = actions;
@@ -173,7 +171,6 @@ export default class PencilPointerListener extends Component {
         DRAW_END,
         getCurrentShapeId(),
         [Math.round(physicalSlideWidth), Math.round(physicalSlideHeight)],
-        drawSettings.tool,
       );
       this.resetState();
     }
@@ -330,14 +327,9 @@ export default class PencilPointerListener extends Component {
   render() {
     const {
       actions,
-      drawSettings,
     } = this.props;
 
     const { contextMenuHandler } = actions;
-
-    const {
-      tool,
-    } = drawSettings;
 
     const baseName = Meteor.settings.public.app.cdn + Meteor.settings.public.app.basename;
     const pencilDrawStyle = {
@@ -345,7 +337,7 @@ export default class PencilPointerListener extends Component {
       height: '100%',
       touchAction: 'none',
       zIndex: MAX_Z_INDEX,
-      cursor: `url('${baseName}/resources/images/whiteboard-cursor/${tool}.png') 2 22, default`,
+      cursor: `url('${baseName}/resources/images/whiteboard-cursor/pencil.png') 2 22, default`,
     };
 
     return (

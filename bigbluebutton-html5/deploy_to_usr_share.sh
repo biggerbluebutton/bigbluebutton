@@ -6,7 +6,7 @@ UPPER_DESTINATION_DIR=/usr/share/meteor
 DESTINATION_DIR=$UPPER_DESTINATION_DIR/bundle
 
 SERVICE_FILES_DIR=/usr/lib/systemd/system
-LOCAL_PACKAGING_DIR=/home/ubuntu/dev/bigbluebutton/build/packages-template/bbb-html5
+LOCAL_PACKAGING_DIR=/home/bigbluebutton/dev/bigbluebutton/build/packages-template/bbb-html5
 
 if [ ! -d "$LOCAL_PACKAGING_DIR" ]; then
   echo "Did not find LOCAL_PACKAGING_DIR=$LOCAL_PACKAGING_DIR"
@@ -40,7 +40,7 @@ echo "writing $DESTINATION_DIR/mongod_start_pre.sh"
 sudo cp $LOCAL_PACKAGING_DIR/mongod_start_pre.sh "$DESTINATION_DIR"/mongod_start_pre.sh
 
 echo "writing $DESTINATION_DIR/mongo-ramdisk.conf"
-sudo cp $LOCAL_PACKAGING_DIR/mongo-ramdisk.conf "$DESTINATION_DIR"/mongo-ramdisk.conf
+sudo cp $LOCAL_PACKAGING_DIR/bionic/mongo-ramdisk.conf "$DESTINATION_DIR"/mongo-ramdisk.conf
 
 echo "writing $DESTINATION_DIR/bbb-html5-with-roles.conf"
 sudo tee "$DESTINATION_DIR/bbb-html5-with-roles.conf" >/dev/null <<HERE
