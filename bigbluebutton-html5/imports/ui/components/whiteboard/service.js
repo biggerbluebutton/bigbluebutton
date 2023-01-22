@@ -17,8 +17,9 @@ const DRAW_END = ANNOTATION_CONFIG.status.end;
 
 const ANNOTATION_TYPE_PENCIL = 'pencil';
 const ANNOTATION_TYPE_TEXT = 'text';
-const discardedList = [];
+const ANNOTATION_TYPE_MARKER = 'marker';
 
+const discardedList = [];
 
 let annotationsStreamListener = null;
 
@@ -26,13 +27,14 @@ export function addAnnotationToDiscardedList(annotation) {
   if (!discardedList.includes(annotation)) discardedList.push(annotation);
 }
 
+
 const clearPreview = (annotation) => {
   UnsentAnnotations.remove({ id: annotation });
 };
 
 const clearFakeAnnotations = () => {
   UnsentAnnotations.remove({});
-  Annotations.remove({ id: /-fake/g });
+  Annotations.remove({ id: /-fake/g, annotationType: { $ne: 'text' } });
 }
 
 function handleAddedLiveSyncPreviewAnnotation({
@@ -45,11 +47,54 @@ function handleAddedLiveSyncPreviewAnnotation({
     Annotations.upsert(query.selector, query.modifier);
     return;
   }
-
   if (annotation.status === DRAW_END) {
     Annotations.remove({ id: `${annotation.id}-fake` });
     Annotations.upsert(query.selector, query.modifier);
   }
+  const fakeAnnotation = Annotations.findOne({ id: `${annotation.id}-fake` });
+  let fakePoints;
+
+  if (fakeAnnotation) {
+    fakePoints = fakeAnnotation.annotationInfo.points;
+    const { points: lastPoints } = annotation.annotationInfo;
+
+    if (annotation.annotationType !== 'pencil') {
+      Annotations.update(fakeAnnotation._id, {
+        $set: {
+          position: annotation.position,
+          'annotationInfo.color': isEqual(fakePoints, lastPoints) || annotation.status === DRAW_END
+            ? annotation.annotationInfo.color : fakeAnnotation.annotationInfo.color,
+        },
+        $inc: { version: 1 }, // TODO: Remove all this version stuff
+      });
+      return;
+    }
+  }
+
+  Annotations.upsert(query.selector, query.modifier, (err) => {
+    if (err) {
+      logger.error({
+        logCode: 'whiteboard_annotation_upsert_error',
+        extraInfo: { error: err },
+      }, 'Error on adding an annotation');
+      return;
+    }
+
+    // Remove fake annotation for pencil on draw end
+    if (annotation.status === DRAW_END) {
+      Annotations.remove({ id: `${annotation.id}-fake` });
+      return;
+    }
+
+    if (annotation.status === DRAW_START) {
+      Annotations.update(fakeAnnotation._id, {
+        $set: {
+          position: annotation.position - 1,
+        },
+        $inc: { version: 1 }, // TODO: Remove all this version stuff
+      });
+    }
+  });
 }
 
 function handleAddedAnnotation({
@@ -210,7 +255,7 @@ const sendAnnotation = (annotation) => {
     // the pencil draw update modifier so that it sets the whole array instead of pushing to
     // the end
     const { status, annotationType } = relevantAnotation;
-    if (status === DRAW_UPDATE && annotationType === ANNOTATION_TYPE_PENCIL) {
+    if (status === DRAW_UPDATE && (annotationType === ANNOTATION_TYPE_PENCIL || annotationType === ANNOTATION_TYPE_MARKER)) {
       delete queryFake.modifier.$push;
       queryFake.modifier.$set['annotationInfo.points'] = annotation.annotationInfo.points;
     }
